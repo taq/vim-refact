@@ -6,7 +6,22 @@
 " URL: git://github.com/taq/vim-refact.git
 "
 
-function! s:VimRefactEndPos()
-   let l:ppos  = searchpairpos("def","","end","b")
-   let l:npos  = searchpairpos("def","","end")
+augroup vimrefact
+   au!
+   autocmd FileType ruby
+   let s:begin_pattern  = '\%(def\|class\|module\) '
+   let s:end_pattern    = 'end'
+augroup END
+
+function! s:VimRefactGetScope()
+   let l:ppos = searchpairpos(s:begin_pattern,'',s:end_pattern,"bWn")
+   let l:npos = searchpairpos(s:begin_pattern,'',s:end_pattern,"Wn")
+   return [l:ppos,l:npos]
+endfunction
+
+function! s:VimRefactBlockType()
+endfunction
+
+function! TestRefact()
+   echo s:VimRefactGetScope()
 endfunction
