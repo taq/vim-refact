@@ -24,6 +24,12 @@ function! s:VimRefactBlockType()
    return matchlist(getbufline("%",l:scope[0][0])[0],'\%(def\|class\|module\)')[0]
 endfunction
 
+function! s:VimRefactExtractMethod()
+   echo "bla"
+endfunction
+
 function! TestRefact()
    echo s:VimRefactBlockType()
 endfunction
+
+vnoremap rem <SID>:VimRefactExtractMethod<CR>
