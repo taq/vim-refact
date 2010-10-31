@@ -20,12 +20,22 @@ function! s:VimRefactGetScope()
    return [l:ppos,l:npos,l:type]
 endfunction
 
-function! s:VimRefactExtractMethod()
-   echo "bla"
+function! VimRefactExtractMethod(name) range
+   let l:mode = visualmode()
+   if l:mode != "V"
+      return
+   endif
+   let l:scope = s:VimRefactGetScope()
+   execute a:firstline.",".a:lastline."y"
+   call append(l:scope[1][0],"def ".a:name)
+   call append(l:scope[1][0]+1,"end")
+   execute l:scope[1][0]+1."put"
+   execute a:firstline.",".a:lastline."d"
+   call append(l:scope[0][0],a:name)
 endfunction
 
 function! TestRefact()
    echo s:VimRefactGetScope()
 endfunction
 
-vnoremap rem <SID>:VimRefactExtractMethod<CR>
+command! -range -nargs=+ Em :<line1>,<line2>call VimRefactExtractMethod(<q-args>)
