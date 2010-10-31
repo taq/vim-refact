@@ -26,8 +26,9 @@ function! VimRefactExtractMethod(name) range
       return
    endif
    let l:scope = s:VimRefactGetScope()
+   let l:block = l:scope[2]
    execute a:firstline.",".a:lastline."y"
-   call append(l:scope[1][0],"def ".a:name)
+   call append(l:scope[1][0],l:block." ".a:name)
    call append(l:scope[1][0]+1,"end")
    execute l:scope[1][0]+1."put"
    execute a:firstline.",".a:lastline."d"
