@@ -9,7 +9,7 @@
 augroup vimrefact
    au!
    autocmd FileType ruby
-   let s:begin_pattern  = '\%(def\|class\|module\) '
+   let s:begin_pattern  = '\%(def\|class\|module\|while\|for\) '
    let s:end_pattern    = 'end'
 augroup END
 
@@ -25,18 +25,34 @@ function! VimRefactExtractMethod(name) range
    if l:mode != "V"
       return
    endif
+
+   " get some info
    let l:scope = s:VimRefactGetScope()
    let l:block = l:scope[2]
+   let l:size  = l:scope[1][0]-l:scope[0][0]
+
+   " yank and create a new method
    execute a:firstline.",".a:lastline."y"
    call append(l:scope[1][0],l:block." ".a:name)
    call append(l:scope[1][0]+1,"end")
+
+   " put the yanked content
    execute l:scope[1][0]+1."put"
+
+   " delete the selection and call the new method there
    execute a:firstline.",".a:lastline."d"
    call append(l:scope[0][0],a:name)
+   call feedkeys("\<CR>","t")
+
+   " indent the block
+   execute ":".l:scope[0][0]
+   call feedkeys("\<S-v>")
+   call feedkeys(((l:size*2)-1)."j")
+   call feedkeys("=","t")
 endfunction
 
 function! TestRefact()
    echo s:VimRefactGetScope()
 endfunction
 
-command! -range -nargs=+ Em :<line1>,<line2>call VimRefactExtractMethod(<q-args>)
+command! -range -nargs=+ Rem :<line1>,<line2>call VimRefactExtractMethod(<q-args>)
