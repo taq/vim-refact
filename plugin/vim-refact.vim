@@ -20,7 +20,7 @@ function! s:VimRefactGetScope()
    return [l:ppos,l:npos,l:type]
 endfunction
 
-function! VimRefactExtractMethod(name) range
+function! VimRefactExtractMethod(...) range
    let l:mode = visualmode()
    if l:mode != "V"
       return
@@ -30,10 +30,20 @@ function! VimRefactExtractMethod(name) range
    let l:scope = s:VimRefactGetScope()
    let l:block = l:scope[2]
    let l:size  = l:scope[1][0]-l:scope[0][0]
+   let l:argx  = ""
+
+   " lets check if there are arguments
+   if(a:[0]>1)
+      let l:argl = []
+      for l:argi in range(a:[0])
+         call add(l:argl,a:000[l:argi+1])
+      endfor         
+      let l:argx = "(".join(l:argl,",").")"
+   endif
 
    " yank and create a new method
    execute a:firstline.",".a:lastline."y"
-   call append(l:scope[1][0],l:block." ".a:name)
+   call append(l:scope[1][0],l:block." ".a:1.l:argx)
    call append(l:scope[1][0]+1,"end")
 
    " put the yanked content
@@ -41,7 +51,7 @@ function! VimRefactExtractMethod(name) range
 
    " delete the selection and call the new method there
    execute a:firstline.",".a:lastline."d"
-   call append(l:scope[0][0],a:name)
+   call append(l:scope[0][0],a:1.l:argx)
    call feedkeys("\<CR>","t")
 
    " indent the block
@@ -55,4 +65,4 @@ function! TestRefact()
    echo s:VimRefactGetScope()
 endfunction
 
-command! -range -nargs=+ Rem :<line1>,<line2>call VimRefactExtractMethod(<q-args>)
+command! -range -nargs=+ Rem :<line1>,<line2>call VimRefactExtractMethod(<f-args>)
