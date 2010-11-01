@@ -23,7 +23,7 @@ function! s:VimRefactGetScope()
    return [l:ppos,l:npos,l:type]
 endfunction
 
-function! VimRefactExtractMethod(...) range
+function! s:VimRefactExtractMethod(...) range
    let l:mode = visualmode()
    if l:mode != "V"
       return
@@ -67,4 +67,4 @@ function! VimRefactExtractMethod(...) range
    call feedkeys("=","t")
 endfunction
 
-command! -range -nargs=+ Rem :<line1>,<line2>call VimRefactExtractMethod(<f-args>)
+command! -range -nargs=+ Rem :<line1>,<line2>call <SID>VimRefactExtractMethod(<f-args>)
