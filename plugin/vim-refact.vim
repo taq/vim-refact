@@ -8,26 +8,41 @@
 
 let s:outside_pattern = ""
 let s:inside_pattern  = ""
+let s:start_pattern   = ""
 let s:end_pattern     = ""
+let s:method_pattern  = ""
 let s:method          = ""
 let s:cls             = ""
 
 augroup vimrefact
    au!
    autocmd FileType ruby call s:VimRefactLoadRuby()
+   autocmd FileType java call s:VimRefactLoadJava()
 augroup END
 
 function! s:VimRefactLoadRuby()
    let s:outside_pattern = '\%(def\|class\|module\) ' 
    let s:inside_pattern  = '\%(def\|class\|module\|while\|for\) ' 
+   let s:start_pattern   = ''
    let s:end_pattern     = 'end'
-   let s:method          = "def"
+   let s:method_pattern  = 'def'
+   let s:method          = 'def'
    let s:cls             = '\%(class\|module\)' 
+endfunction
+
+function! s:VimRefactLoadJava()
+   let s:outside_pattern = '{' 
+   let s:inside_pattern  = '{' 
+   let s:start_pattern   = '{'
+   let s:end_pattern     = '}'
+   let s:method_pattern  = '.'
+   let s:method          = 'public void'
+   let s:cls             = 'class' 
 endfunction
 
 function! s:VimRefactGetScope()
    if strlen(s:outside_pattern)<1
-      return
+      return -1
    endif
    let l:ppos = searchpairpos(s:outside_pattern,'',s:end_pattern,"bW")
    let l:npos = searchpairpos(s:inside_pattern ,'',s:end_pattern,"W")
@@ -43,10 +58,11 @@ function! s:VimRefactExtractMethod(...) range
 
    " get some info
    let l:scope = s:VimRefactGetScope()
+
    let l:block = l:scope[2]
    let l:size  = l:scope[1][0]-l:scope[0][0]
    let l:argx  = ""
-   let l:imeth = l:block =~ s:method
+   let l:imeth = l:block =~ s:method_pattern
 
    " lets check if there are arguments
    if(a:[0]>1)
@@ -59,7 +75,7 @@ function! s:VimRefactExtractMethod(...) range
 
    " yank and create a new method
    execute a:firstline.",".a:lastline."y"
-   call append(l:scope[1][0]+(l:imeth ? 0 : -2),s:method." ".a:1.l:argx)
+   call append(l:scope[1][0]+(l:imeth ? 0 : -2),s:method." ".a:1.l:argx." ".s:start_pattern)
    call append(l:scope[1][0]+(l:imeth ? 1 : -2),s:end_pattern)
 
    " put the yanked content
