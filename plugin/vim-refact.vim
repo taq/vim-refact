@@ -44,7 +44,7 @@ function! VimRefactExtractMethod(...) range
    " yank and create a new method
    execute a:firstline.",".a:lastline."y"
    call append(l:scope[1][0],l:block." ".a:1.l:argx)
-   call append(l:scope[1][0]+1,"end")
+   call append(l:scope[1][0]+1,s:end_pattern)
 
    " put the yanked content
    execute l:scope[1][0]+1."put"
@@ -59,10 +59,6 @@ function! VimRefactExtractMethod(...) range
    call feedkeys("\<S-v>")
    call feedkeys(((l:size*2)-1)."j")
    call feedkeys("=","t")
-endfunction
-
-function! TestRefact()
-   echo s:VimRefactGetScope()
 endfunction
 
 command! -range -nargs=+ Rem :<line1>,<line2>call VimRefactExtractMethod(<f-args>)
