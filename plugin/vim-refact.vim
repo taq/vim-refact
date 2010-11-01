@@ -21,10 +21,6 @@ function! s:VimRefactGetScope()
    return [l:ppos,l:npos,l:type]
 endfunction
 
-function! GetScope()
-   return s:VimRefactGetScope()
-endfunction
-
 function! VimRefactExtractMethod(...) range
    let l:mode = visualmode()
    if l:mode != "V"
