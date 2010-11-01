@@ -20,8 +20,9 @@ module Test
             c += 1
          end 
       end
-      def some_method(p1)
-         p1.inspect
+      def some_method(foo)
+         foo.inspect
+         puts "foo converted to string: #{foo}"
       end
    end
 end

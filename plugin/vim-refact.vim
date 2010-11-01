@@ -23,7 +23,7 @@ function! s:VimRefactGetScope()
    return [l:ppos,l:npos,l:type]
 endfunction
 
-function! VimRefactExtractMethod(...) range
+function! s:VimRefactExtractMethod(...) range
    let l:mode = visualmode()
    if l:mode != "V"
       return
@@ -67,4 +67,10 @@ function! VimRefactExtractMethod(...) range
    call feedkeys("=","t")
 endfunction
 
-command! -range -nargs=+ Rem :<line1>,<line2>call VimRefactExtractMethod(<f-args>)
+function! s:VimRefactRenameVariable(...)
+   let l:scope = s:VimRefactGetScope()
+   execute l:scope[0][0].",".l:scope[1][0]."s/".a:[1]."/".a:[2]."/g"
+endfunction
+
+command! -range -nargs=+ Rem :<line1>,<line2>call <SID>VimRefactExtractMethod(<f-args>)
+command! -nargs=+ Rmv :call <SID>VimRefactRenameVariable(<f-args>)
