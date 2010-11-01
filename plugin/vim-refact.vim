@@ -6,17 +6,29 @@
 " URL: git://github.com/taq/vim-refact.git
 "
 
+let s:outside_pattern = ""
+let s:inside_pattern  = ""
+let s:end_pattern     = ""
+let s:method          = ""
+let s:cls             = ""
+
 augroup vimrefact
    au!
-   autocmd FileType ruby
-             let s:outside_pattern = '\%(def\|class\|module\) '
-             let s:inside_pattern  = '\%(def\|class\|module\|while\|for\) ' 
-             let s:end_pattern     = 'end'
-             let s:method          = "def"
-             let s:cls             = '\%(class\|module\)'
+   autocmd FileType ruby call s:VimRefactLoadRuby()
 augroup END
 
+function! s:VimRefactLoadRuby()
+   let s:outside_pattern = '\%(def\|class\|module\) ' 
+   let s:inside_pattern  = '\%(def\|class\|module\|while\|for\) ' 
+   let s:end_pattern     = 'end'
+   let s:method          = "def"
+   let s:cls             = '\%(class\|module\)' 
+endfunction
+
 function! s:VimRefactGetScope()
+   if strlen(s:outside_pattern)<1
+      return
+   endif
    let l:ppos = searchpairpos(s:outside_pattern,'',s:end_pattern,"bW")
    let l:npos = searchpairpos(s:inside_pattern ,'',s:end_pattern,"W")
    let l:type = substitute(matchlist(getbufline("%",l:ppos[0])[0],s:outside_pattern)[0]," ","","")
