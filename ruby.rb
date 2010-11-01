@@ -20,5 +20,8 @@ module Test
             c += 1
          end 
       end
+      def some_method(p1)
+         p1.inspect
+      end
    end
 end

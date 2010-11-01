@@ -9,11 +9,11 @@
 augroup vimrefact
    au!
    autocmd FileType ruby
-            \ let s:outside_pattern = '\%(def\|class\|module\) '
-            \ let s:inside_pattern  = '\%(def\|class\|module\|while\|for\) ' 
-            \ let s:end_pattern     = 'end'
-            \ let s:method          = "def"
-            \ let s:cls             = '\%(class\|module\)'
+             let s:outside_pattern = '\%(def\|class\|module\) '
+             let s:inside_pattern  = '\%(def\|class\|module\|while\|for\) ' 
+             let s:end_pattern     = 'end'
+             let s:method          = "def"
+             let s:cls             = '\%(class\|module\)'
 augroup END
 
 function! s:VimRefactGetScope()
@@ -23,7 +23,7 @@ function! s:VimRefactGetScope()
    return [l:ppos,l:npos,l:type]
 endfunction
 
-function! s:VimRefactExtractMethod(...) range
+function! VimRefactExtractMethod(...) range
    let l:mode = visualmode()
    if l:mode != "V"
       return
@@ -67,4 +67,4 @@ function! s:VimRefactExtractMethod(...) range
    call feedkeys("=","t")
 endfunction
 
-command! -range -nargs=+ Rem :<line1>,<line2>call <SID>VimRefactExtractMethod(<f-args>)
+command! -range -nargs=+ Rem :<line1>,<line2>call VimRefactExtractMethod(<f-args>)
