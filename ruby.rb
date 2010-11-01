@@ -8,6 +8,11 @@ module Test
       def test
          puts "test!"
          puts "bye!"
+         c = 0
+         while c < 10
+            puts "c = #{c}"
+            c += 1
+         end 
       end
    end
 end

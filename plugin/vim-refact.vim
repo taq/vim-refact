@@ -9,15 +9,20 @@
 augroup vimrefact
    au!
    autocmd FileType ruby
-   let s:begin_pattern  = '\%(def\|class\|module\|while\|for\) '
-   let s:end_pattern    = 'end'
+   let s:outside_pattern   = '\%(def\|class\|module\) '
+   let s:inside_pattern    = '\%(def\|class\|module\|while\) '
+   let s:end_pattern       = 'end'
 augroup END
 
 function! s:VimRefactGetScope()
-   let l:ppos = searchpairpos(s:begin_pattern,'',s:end_pattern,"bWn")
-   let l:npos = searchpairpos(s:begin_pattern,'',s:end_pattern,"Wn")
-   let l:type = substitute(matchlist(getbufline("%",l:ppos[0])[0],s:begin_pattern)[0]," ","","")
+   let l:ppos = searchpairpos(s:outside_pattern,'',s:end_pattern,"bW")
+   let l:npos = searchpairpos(s:inside_pattern ,'',s:end_pattern,"W")
+   let l:type = substitute(matchlist(getbufline("%",l:ppos[0])[0],s:outside_pattern)[0]," ","","")
    return [l:ppos,l:npos,l:type]
+endfunction
+
+function! GetScope()
+   return s:VimRefactGetScope()
 endfunction
 
 function! VimRefactExtractMethod(...) range
@@ -36,7 +41,7 @@ function! VimRefactExtractMethod(...) range
    if(a:[0]>1)
       let l:argl = []
       for l:argi in range(a:[0])
-         call add(l:argl,a:000[l:argi+1])
+         call add(l:argl,a:000[l:argi])
       endfor         
       let l:argx = "(".join(l:argl,",").")"
    endif
@@ -51,7 +56,7 @@ function! VimRefactExtractMethod(...) range
 
    " delete the selection and call the new method there
    execute a:firstline.",".a:lastline."d"
-   call append(l:scope[0][0],a:1.l:argx)
+   call append(a:firstline-1,a:1.l:argx)
    call feedkeys("\<CR>","t")
 
    " indent the block
