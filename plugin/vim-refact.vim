@@ -10,7 +10,7 @@ augroup vimrefact
    au!
    autocmd FileType ruby
    let s:outside_pattern   = '\%(def\|class\|module\) '
-   let s:inside_pattern    = '\%(def\|class\|module\|while\) '
+   let s:inside_pattern    = '\%(def\|class\|module\|while\|for\) '
    let s:end_pattern       = 'end'
 augroup END
 
@@ -40,8 +40,8 @@ function! VimRefactExtractMethod(...) range
    " lets check if there are arguments
    if(a:[0]>1)
       let l:argl = []
-      for l:argi in range(a:[0])
-         call add(l:argl,a:000[l:argi])
+      for l:argi in range(a:[0]-1)
+         call add(l:argl,a:000[l:argi+1])
       endfor         
       let l:argx = "(".join(l:argl,",").")"
    endif
@@ -59,7 +59,7 @@ function! VimRefactExtractMethod(...) range
    call append(a:firstline-1,a:1.l:argx)
    call feedkeys("\<CR>","t")
 
-   " indent the block
+   "" indent the block
    execute ":".l:scope[0][0]
    call feedkeys("\<S-v>")
    call feedkeys(((l:size*2)-1)."j")
