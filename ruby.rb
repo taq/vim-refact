@@ -1,4 +1,7 @@
 module Test
+   puts "bye"
+   puts "tchau"
+   puts "hasta la vista"
    # test class
    class Test
       puts "hi"

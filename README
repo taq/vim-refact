@@ -1,1 +1,241 @@
 Refactor plugin for Vim.
+
+You can use this plugin to make some refactoring on your code.
+It was originally written to work with the Ruby language, but it's
+flexible (I hope, I'll add some more languages later) to work with
+another languages.
+
+Examples
+========
+
+Extracting a method
+-------------------
+
+Let's say we have this Ruby code:
+
+01. module Test
+02.   puts "bye"
+03.   puts "tchau"
+04.   puts "hasta la vista"
+05.   # test class
+06.   class Test
+07.      puts "hi"
+08.      puts "oi"
+09.      puts "hola"
+10.      def initialize
+11.         @foo = "bar"
+12.      end
+13.      # test method
+14.      def test
+15.         puts "test!"
+16.         puts "bye!"
+17.         c = 0
+18.         while c < 10
+19.            puts "c = #{c}"
+20.            c += 1
+21.         end 
+22.      end
+23.   end
+24. end
+
+If the cursor is positioned over the line 2, and the lines are selected
+till the line 4, we can type:
+
+:Rem <method> (<p1>, <p2>)
+
+to extract those lines to a <method> with some optionally parameters. So,
+
+:Rem say_bye<CR>
+
+will turn our code to this:
+
+01. module Test
+02.    # test class
+03.    class Test
+04.       puts "hi"
+05.       puts "oi"
+06.       puts "hola"
+07.       def initialize
+08.          @foo = "bar"
+09.       end
+10.       # test method
+11.       def test
+12.          puts "test!"
+13.          puts "bye!"
+14.          c = 0
+15.          while c < 10
+16.             puts "c = #{c}"
+17.             c += 1
+18.          end 
+19.       end
+20.    end
+21.    def say_bye
+22.       puts "bye"
+23.       puts "tchau"
+24.       puts "hasta la vista"
+25.    end
+26. end
+
+where a module method was created with the selected content.
+
+Now, selecting from line 4 to 6, extracting the code to a method
+inside the class Test, called say_hi, with
+
+:Rem say_hi
+
+and the code now is 
+
+00. module Test
+01.    # test class
+02.    class Test
+03.       def initialize
+04.          @foo = "bar"
+05.       end
+06.       # test method
+07.       def test
+08.          puts "test!"
+09.          puts "bye!"
+10.          c = 0
+11.          while c < 10
+12.             puts "c = #{c}"
+13.             c += 1
+14.          end 
+15.       end
+16.       def say_hi
+17.          puts "hi"
+18.          puts "oi"
+19.          puts "hola"
+20.       end
+21.    end
+22.    def say_bye
+23.       puts "bye"
+24.       puts "tchau"
+25.       puts "hasta la vista"
+26.    end
+27. end
+
+We can remove content from inside a method to another one. Let's
+say we want to remove lines 8 and 9 to a method called another_test.
+Select those 2 lines and
+
+:Rem another_test
+
+and now the code is
+
+01. module Test
+02.    # test class
+03.    class Test
+04.       def initialize
+05.          @foo = "bar"
+06.       end
+07.       # test method
+08.       def test
+09.          another_test
+10.          c = 0
+11.          while c < 10
+12.             puts "c = #{c}"
+13.             c += 1
+14.          end 
+15.       end
+16.       def another_test
+17.          puts "test!"
+18.          puts "bye!"
+19.       end
+20.       def say_hi
+21.          puts "hi"
+22.          puts "oi"
+23.          puts "hola"
+24.       end
+25.    end
+26.    def say_bye
+27.       puts "bye"
+28.       puts "tchau"
+29.       puts "hasta la vista"
+30.    end
+31. end
+
+Now we have the option to extract lines 10 to 14 or 12 to 13. Let's
+try the first option, extracting the code to a method called count.
+Select from lines 10 to 14 and
+
+:Rem count
+
+and now the code is
+
+01. module Test
+02.    # test class
+03.    class Test
+04.       def initialize
+05.          @foo = "bar"
+06.       end
+07.       # test method
+08.       def test
+09.          another_test
+10.          count
+11.       end
+12.       def count
+13.          c = 0
+14.          while c < 10
+15.             puts "c = #{c}"
+16.             c += 1
+17.          end 
+18.       end
+19.       def another_test
+20.          puts "test!"
+21.          puts "bye!"
+22.       end
+23.       def say_hi
+24.          puts "hi"
+25.          puts "oi"
+26.          puts "hola"
+27.       end
+28.    end
+29.    def say_bye
+30.       puts "bye"
+31.       puts "tchau"
+32.       puts "hasta la vista"
+33.    end
+34. end
+
+Or we can extract only from line 12 (see code before the last change)
+to a method called show_count, creating a c parameter and sending the c variable
+to the method, selecting line 12 and
+
+:Rem show_count c
+
+and now the code is
+
+01. module Test
+02.    # test class
+03.    class Test
+04.       def initialize
+05.          @foo = "bar"
+06.       end
+07.       # test method
+08.       def test
+09.          another_test
+10.          c = 0
+11.          while c < 10
+12.             show_count(c)
+13.             c += 1
+14.          end 
+15.       end
+16.       def show_count(c)
+17.          puts "c = #{c}"
+18.       end
+19.       def another_test
+20.          puts "test!"
+21.          puts "bye!"
+22.       end
+23.       def say_hi
+24.          puts "hi"
+25.          puts "oi"
+26.          puts "hola"
+27.       end
+28.    end
+29.    def say_bye
+30.       puts "bye"
+31.       puts "tchau"
+32.       puts "hasta la vista"
+33.    end
+34. end
