@@ -9,9 +9,11 @@
 augroup vimrefact
    au!
    autocmd FileType ruby
-   let s:outside_pattern   = '\%(def\|class\|module\) '
-   let s:inside_pattern    = '\%(def\|class\|module\|while\|for\) '
-   let s:end_pattern       = 'end'
+            \ let s:outside_pattern = '\%(def\|class\|module\) '
+            \ let s:inside_pattern  = '\%(def\|class\|module\|while\|for\) ' 
+            \ let s:end_pattern     = 'end'
+            \ let s:method          = "def"
+            \ let s:cls             = '\%(class\|module\)'
 augroup END
 
 function! s:VimRefactGetScope()
@@ -32,6 +34,7 @@ function! VimRefactExtractMethod(...) range
    let l:block = l:scope[2]
    let l:size  = l:scope[1][0]-l:scope[0][0]
    let l:argx  = ""
+   let l:imeth = l:block =~ s:method
 
    " lets check if there are arguments
    if(a:[0]>1)
@@ -44,18 +47,20 @@ function! VimRefactExtractMethod(...) range
 
    " yank and create a new method
    execute a:firstline.",".a:lastline."y"
-   call append(l:scope[1][0],l:block." ".a:1.l:argx)
-   call append(l:scope[1][0]+1,s:end_pattern)
+   call append(l:scope[1][0]+(l:imeth ? 0 : -2),s:method." ".a:1.l:argx)
+   call append(l:scope[1][0]+(l:imeth ? 1 : -2),s:end_pattern)
 
    " put the yanked content
-   execute l:scope[1][0]+1."put"
+   execute l:scope[1][0]+(l:imeth ? 1 : 0)."put"
 
-   " delete the selection and call the new method there
+   " delete the selection and call the new method there, if needed
    execute a:firstline.",".a:lastline."d"
-   call append(a:firstline-1,a:1.l:argx)
+   if(l:imeth)
+      call append(a:firstline-1,a:1.l:argx)
+   endif      
    call feedkeys("\<CR>","t")
 
-   "" indent the block
+   " indent the block
    execute ":".l:scope[0][0]
    call feedkeys("\<S-v>")
    call feedkeys(((l:size*2)-1)."j")

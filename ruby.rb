@@ -1,6 +1,9 @@
 module Test
    # test class
    class Test
+      puts "hi"
+      puts "oi"
+      puts "hola"
       def initialize
          @foo = "bar"
       end
