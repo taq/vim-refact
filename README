@@ -239,3 +239,62 @@ and now the code is
 32.       puts "hasta la vista"
 33.    end
 34. end
+
+Renaming a variable on method scope
+-----------------------------------
+
+If we have this piece of code:
+
+01. # test method, with foo argument
+02. def some_method(foo)
+03.   foo.inspect
+04.   puts "foo converted to string: #{foo}"
+05. end
+
+and position the cursor on rows 3 or 4 and use
+
+:Rrv foo bar
+
+we changed all the ocurrences of foo to bar *inside the method*:
+
+01. # test method, with foo argument
+02. def some_method(bar)
+03.    bar.inspect
+04.    puts "bar converted to string: #{bar}"
+05. end
+
+if the cursor position is on line 1, all the other ocurrences of
+the foo var above (ok, we don't have more lines above here but you 
+got the point) will be also changed.
+
+Renaming an attribute
+---------------------
+
+If we have this piece of code:
+
+01.   class Test
+02.      def initialize
+03.         @foo = "bar"
+04.      end
+05.      def print_contents
+06.         # foo contents
+07.         puts "#{@foo}"
+08.      end
+09.   end
+
+and wants to change all the ocurrences of the foo attribute (@foo)
+to @bar, we can use, inside the class scope:
+
+:Rra foo bar
+
+so we can get
+
+01.   class Test
+02.      def initialize
+03.         @bar = "bar"
+04.      end
+05.      def print_contents
+06.         # foo contents
+07.         puts "#{@bar}"
+08.      end
+09.   end
