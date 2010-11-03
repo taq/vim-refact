@@ -109,6 +109,26 @@ function! s:VimRefactExtractMethod(...) range
    call feedkeys("=","t")
 endfunction
 
+function! s:VimRefactPrompt(prompt)
+   if &term =~ 'gui'
+      return inputdialog(a:prompt)
+   else
+      call inputsave()
+      let l:rtn = input(a:prompt." (or return to cancel): ")
+      call inputrestore()
+      return l:rtn
+   endif
+endfunction
+
+function! s:VimRefactAskForNewVarName()
+   let l:oname = expand("<cword>")
+   let l:nname = s:VimRefactPrompt("Type the new variable name")
+   if strlen(l:nname)<1
+      return
+   endif
+   call s:VimRefactRenameVariable(l:oname,l:nname)
+endfunction
+
 function! s:VimRefactRenameVariable(...)
    let l:scope = s:VimRefactGetScope()
    execute l:scope[0][0].",".l:scope[1][0]."s/".a:[1]."/".a:[2]."/g"
@@ -122,3 +142,5 @@ endfunction
 command! -range -nargs=+ Rem :<line1>,<line2>call <SID>VimRefactExtractMethod(<f-args>)
 command! -nargs=+ Rrv :call <SID>VimRefactRenameVariable(<f-args>)
 command! -nargs=+ Rra :call <SID>VimRefactRenameAttribute(<f-args>)
+
+nnoremap rrv :call <SID>VimRefactAskForNewVarName()<CR>
