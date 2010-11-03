@@ -15,6 +15,7 @@ let b:method          = ""
 let b:cls_pattern     = ""
 let b:cls             = ""
 let b:attr_prefix     = ""
+let b:line_terminator = ""
 
 augroup vimrefact
    au!
@@ -32,6 +33,7 @@ function! s:VimRefactLoadRuby()
    let b:cls_pattern     = '\%(class\|def\|while\|for\)' 
    let b:cls             = 'class'
    let b:attr_prefix     = "@"
+   let b:line_terminator = ""
 endfunction
 
 function! s:VimRefactLoadJava()
@@ -44,6 +46,7 @@ function! s:VimRefactLoadJava()
    let b:cls_pattern     = 'class\s\+\w\+\s\?{\?'
    let b:cls             = 'class' 
    let b:attr_prefix     = 'this\.'
+   let b:line_terminator = ";"
 endfunction
 
 function! s:VimRefactGetScope()
@@ -95,7 +98,7 @@ function! s:VimRefactExtractMethod(...) range
    " delete the selection and call the new method there, if needed
    execute a:firstline.",".a:lastline."d"
    if(l:imeth)
-      call append(a:firstline-1,a:1.l:argx)
+      call append(a:firstline-1,a:1.l:argx.b:line_terminator)
    endif      
    call feedkeys("\<CR>","t")
 
