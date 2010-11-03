@@ -41,7 +41,9 @@ function! s:VimRefactLoadJava()
    let s:end_pattern     = '}'
    let s:method_pattern  = '.'
    let s:method          = 'public void'
+   let s:cls_pattern     = 'class\s\+\w\+\s\?{\?'
    let s:cls             = 'class' 
+   let s:attr_prefix     = 'this\.'
 endfunction
 
 function! s:VimRefactGetScope()
