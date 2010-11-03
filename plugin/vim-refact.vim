@@ -134,6 +134,15 @@ function! s:VimRefactRenameVariable(...)
    execute l:scope[0][0].",".l:scope[1][0]."s/".a:[1]."/".a:[2]."/g"
 endfunction
 
+function! s:VimRefactAskForNewAttrName()
+   let l:oname = expand("<cword>")
+   let l:nname = s:VimRefactPrompt("Type the new attribute name")
+   if strlen(l:nname)<1
+      return
+   endif
+   call s:VimRefactRenameAttribute(l:oname,l:nname)
+endfunction
+
 function! s:VimRefactRenameAttribute(...)
    let l:scope = s:VimRefactGetClassScope()
    execute l:scope[0][0].",".l:scope[1][0]."s/".b:attr_prefix.a:[1]."/".b:attr_prefix.a:[2]."/g"
@@ -144,3 +153,4 @@ command! -nargs=+ Rrv :call <SID>VimRefactRenameVariable(<f-args>)
 command! -nargs=+ Rra :call <SID>VimRefactRenameAttribute(<f-args>)
 
 nnoremap rrv :call <SID>VimRefactAskForNewVarName()<CR>
+nnoremap rra :call <SID>VimRefactAskForNewAttrName()<CR>
