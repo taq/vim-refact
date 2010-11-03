@@ -1,6 +1,6 @@
 " Vim refactoring plugin
-" Last change: 2010-10-29
-" Version 0.0.1
+" Last change: 2010-11-03
+" Version 0.0.2
 " Maintainer: Eustaquio 'TaQ' Rangel
 " License: GPL
 " URL: git://github.com/taq/vim-refact.git
