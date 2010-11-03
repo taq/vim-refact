@@ -43,9 +43,17 @@ till the line 4, we can type:
 
 :Rem <method> (<p1>, <p2>)
 
+or, in visual mode, typing the new method name when asked
+
+rem 
+
 to extract those lines to a <method> with some optionally parameters. So,
 
 :Rem say_bye<CR>
+
+or on visual mode
+
+rem (typing say_bye)
 
 will turn our code to this:
 
@@ -83,6 +91,10 @@ inside the class Test, called say_hi, with
 
 :Rem say_hi
 
+or, in visual mode, typing say_hi when asked for a new method name
+
+rem
+
 and the code now is 
 
 00. module Test
@@ -119,6 +131,11 @@ say we want to remove lines 8 and 9 to a method called another_test.
 Select those 2 lines and
 
 :Rem another_test
+
+or, in visual mode, typing another_test when asked about the new method
+name
+
+rem
 
 and now the code is
 
@@ -159,6 +176,10 @@ try the first option, extracting the code to a method called count.
 Select from lines 10 to 14 and
 
 :Rem count
+
+or, on visual mode, typing count when asked about the new method name
+
+rem
 
 and now the code is
 
@@ -202,6 +223,10 @@ to a method called show_count, creating a c parameter and sending the c variable
 to the method, selecting line 12 and
 
 :Rem show_count c
+
+or on visual mode, typing show_count c when asked about the new method name
+
+rem
 
 and now the code is
 
@@ -255,6 +280,10 @@ and position the cursor on rows 3 or 4 and use
 
 :Rrv foo bar
 
+or, more easier, put the cursor over the foo word and type
+
+rrv (typing the new variable name when asked)
+
 we changed all the ocurrences of foo to bar *inside the method*:
 
 01. # test method, with foo argument
@@ -286,6 +315,10 @@ and wants to change all the ocurrences of the foo attribute (@foo)
 to @bar, we can use, inside the class scope:
 
 :Rra foo bar
+
+or, more easier, put the cursor over the foo word and type
+
+rra (typing the new attribute name when asked)
 
 so we can get
 

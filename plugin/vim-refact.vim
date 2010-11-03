@@ -92,6 +92,11 @@ function! s:VimRefactExtractMethod(...) range
       if strlen(l:mname)<1
          return
       endif
+      let l:tokens = split(l:mname)
+      let l:mname  = l:tokens[0]
+      if len(l:tokens)>1
+         let l:argx = "(".join(l:tokens[1:],",").")"
+      endif
    endif
 
    " yank and create a new method
