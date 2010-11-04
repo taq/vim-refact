@@ -16,6 +16,7 @@ let b:cls_pattern     = ""
 let b:cls             = ""
 let b:attr_prefix     = ""
 let b:line_terminator = ""
+let b:assigments      = ""
 
 augroup vimrefact
    au!
@@ -34,6 +35,7 @@ function! s:VimRefactLoadRuby()
    let b:cls             = 'class'
    let b:attr_prefix     = "@"
    let b:line_terminator = ""
+   let b:assigments      = '+=\|-=\|*=\|/=\|=\~\|!=\|='
 endfunction
 
 function! s:VimRefactLoadJava()
@@ -47,6 +49,7 @@ function! s:VimRefactLoadJava()
    let b:cls             = 'class' 
    let b:attr_prefix     = 'this\.'
    let b:line_terminator = ";"
+   let b:assigments      = '+=\|-=\|*=\|/=\|=\~\|!=\|++\|--\|='
 endfunction
 
 function! s:VimRefactGetScope()
@@ -160,6 +163,29 @@ function! s:VimRefactRenameAttribute(...)
    execute l:scope[0][0].",".l:scope[1][0]."s/".b:attr_prefix.a:[1]."/".b:attr_prefix.a:[2]."/g"
 endfunction
 
+function! s:VimRefactAlignAssigments() range
+   let l:max   = 0
+   let l:maxo  = 0
+   let l:linc  = ""
+   for l:line in range(a:firstline,a:lastline)
+      let l:linc  = getbufline("%",l:line)[0]
+      let l:rst   = match   (l:linc,'\%('.b:assigments.'\)')
+      let l:rstl  = matchstr(l:linc,'\%('.b:assigments.'\)')
+      if l:rst<0
+         continue
+      endif
+      let l:max   = max([l:max ,strlen(substitute(strpart(l:linc,0,l:rst),'\s*$','',''))+1])
+      let l:maxo  = max([l:maxo,strlen(l:rstl)])
+   endfor
+   let l:formatter= '\=printf("%-'.l:max.'s%-'.l:maxo.'s%s",submatch(1),submatch(2),submatch(3))'
+   let l:expr     = '^\(.\{-}\)\s*\('.b:assigments.'\)\(.*\)'
+   for l:line in range(a:firstline,a:lastline)
+      let l:oldline = getbufline("%",l:line)[0]
+      let l:newline = substitute(l:oldline,l:expr,l:formatter,"")
+      call setline(l:line,l:newline)
+   endfor
+endfunction
+
 command! -range -nargs=+ Rem :<line1>,<line2>call <SID>VimRefactExtractMethod(<f-args>)
 command! -nargs=+ Rrv :call <SID>VimRefactRenameVariable(<f-args>)
 command! -nargs=+ Rra :call <SID>VimRefactRenameAttribute(<f-args>)
@@ -169,3 +195,4 @@ nnoremap rrv :call <SID>VimRefactAskForNewVarName()<CR>
 vnoremap rrv :call <SID>VimRefactAskForNewVarName()<CR>
 nnoremap rra :call <SID>VimRefactAskForNewAttrName()<CR>
 vnoremap rra :call <SID>VimRefactAskForNewAttrName()<CR>
+vnoremap raa :call <SID>VimRefactAlignAssigments()<CR>
