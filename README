@@ -331,3 +331,32 @@ so we can get
 07.         puts "#{@bar}"
 08.      end
 09.   end
+
+Align assigment operators
+-------------------------
+
+Suppose we have this code:
+
+a = 1
+ab += 2
+abc         -= 3
+abcd *= 4
+abcde    /= 2
+abcdef =~ /foo/
+abcdefg       != /bar/
+
+Ugly, right? Select all the lines and type
+
+raa
+
+and then 
+
+a       =  1
+ab      += 2
+abc     -= 3
+abcd    *= 4
+abcde   /= 2
+abcdef  =~ /foo/
+abcdefg != /bar/
+
+Better, uh?
