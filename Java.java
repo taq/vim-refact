@@ -1,5 +1,9 @@
 public class Java {
    String s = "test";
+   System.out.println("hi");
+   System.out.println("oi");
+   System.out.println("bye");
+   System.out.println("tchau");
    public Java() {
       for(int i=0; i<10; i++)
          System.out.println(i);

@@ -1,6 +1,6 @@
 " Vim refactoring plugin
 " Last change: 2010-11-03
-" Version 0.0.4
+" Version 0.0.5
 " Maintainer: Eustaquio 'TaQ' Rangel
 " License: GPL
 " URL: git://github.com/taq/vim-refact.git
@@ -22,16 +22,17 @@ augroup vimrefact
    au!
    autocmd FileType ruby call s:VimRefactLoadRuby()
    autocmd FileType java call s:VimRefactLoadJava()
+   autocmd FileType php  call s:VimRefactLoadPHP()
 augroup END
 
 function! s:VimRefactLoadRuby()
-   let b:outside_pattern = '\%(def\|class\|module\) ' 
-   let b:inside_pattern  = '\%(def\|class\|module\|while\|for\) ' 
+   let b:outside_pattern = '^\s*\%(def\|class\|module\) ' 
+   let b:inside_pattern  = '^\s*\%(def\|class\|module\|while\|for\) ' 
    let b:start_pattern   = ''
    let b:end_pattern     = 'end'
-   let b:method_pattern  = 'def'
+   let b:method_pattern  = '^\s*def '
    let b:method          = 'def'
-   let b:cls_pattern     = '\%(class\|def\|while\|for\)' 
+   let b:cls_pattern     = '^\s*\%(class\|def\|while\|for\)' 
    let b:cls             = 'class'
    let b:attr_prefix     = "@"
    let b:line_terminator = ""
@@ -43,11 +44,25 @@ function! s:VimRefactLoadJava()
    let b:inside_pattern  = '{' 
    let b:start_pattern   = '{'
    let b:end_pattern     = '}'
-   let b:method_pattern  = '.'
+   let b:method_pattern  = '^\(.*class\)\@!.*$'
    let b:method          = 'public void'
    let b:cls_pattern     = 'class\s\+\w\+\s\?{\?'
    let b:cls             = 'class' 
    let b:attr_prefix     = 'this\.'
+   let b:line_terminator = ";"
+   let b:assigments      = '+=\|-=\|*=\|/=\|=\~\|!=\|++\|--\|='
+endfunction
+
+function! s:VimRefactLoadPHP()
+   let b:outside_pattern = '{' 
+   let b:inside_pattern  = '{' 
+   let b:start_pattern   = '{'
+   let b:end_pattern     = '}'
+   let b:method_pattern  = 'function'
+   let b:method          = 'function'
+   let b:cls_pattern     = '^\s*\%(class\|function\|while\|foreach\)'
+   let b:cls             = 'class' 
+   let b:attr_prefix     = '$this->'
    let b:line_terminator = ";"
    let b:assigments      = '+=\|-=\|*=\|/=\|=\~\|!=\|++\|--\|='
 endfunction
@@ -76,10 +91,9 @@ function! s:VimRefactExtractMethod(...) range
 
    " get some info
    let l:scope = s:VimRefactGetScope()
-   let l:block = l:scope[2]
    let l:size  = l:scope[1][0]-l:scope[0][0]
    let l:argx  = ""
-   let l:imeth = l:block =~ b:method_pattern
+   let l:imeth = getbufline("%",l:scope[0][0])[0] =~ b:method_pattern
    let l:mname = ""
 
    " lets check if there are arguments
