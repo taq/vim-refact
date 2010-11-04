@@ -160,7 +160,7 @@ endfunction
 
 function! s:VimRefactRenameVariable(...)
    let l:scope = s:VimRefactGetScope()
-   execute l:scope[0][0].",".l:scope[1][0]."s/".a:[1]."/".a:[2]."/g"
+   execute l:scope[0][0].",".l:scope[1][0]."s/\\<".a:[1]."\\>/".a:[2]."/g"
 endfunction
 
 function! s:VimRefactAskForNewAttrName()
