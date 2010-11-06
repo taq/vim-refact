@@ -1,6 +1,6 @@
 " Vim refactoring plugin
-" Last change: 2010-11-03
-" Version 0.0.5
+" Last change: 2010-11-06
+" Version 0.0.6
 " Maintainer: Eustaquio 'TaQ' Rangel
 " License: GPL
 " URL: git://github.com/taq/vim-refact.git
@@ -117,22 +117,21 @@ function! s:VimRefactExtractMethod(...) range
    endif
 
    " yank and create a new method
-   execute a:firstline.",".a:lastline."y"
+   silent execute a:firstline.",".a:lastline."y"
    call append(l:scope[1][0]+(l:imeth ? 0 : -2),b:method." ".l:mname.l:argx." ".b:start_pattern)
    call append(l:scope[1][0]+(l:imeth ? 1 : -2),b:end_pattern)
 
    " put the yanked content
-   execute l:scope[1][0]+(l:imeth ? 1 : 0)."put"
+   silent execute l:scope[1][0]+(l:imeth ? 1 : 0)."put"
 
    " delete the selection and call the new method there, if needed
-   execute a:firstline.",".a:lastline."d"
+   silent execute a:firstline.",".a:lastline."d"
    if(l:imeth)
       call append(a:firstline-1,l:mname.l:argx.b:line_terminator)
    endif      
-   call feedkeys("\<CR>","t")
 
    " indent the block
-   execute ":".l:scope[0][0]
+   silent execute ":".l:scope[0][0]
    call feedkeys("\<S-v>")
    call feedkeys(((l:size*2)-1)."j")
    call feedkeys("=","t")
