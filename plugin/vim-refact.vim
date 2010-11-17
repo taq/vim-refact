@@ -7,6 +7,7 @@
 "
 
 let b:outside_pattern = ""
+let b:check_outside   = 0
 let b:inside_pattern  = ""
 let b:start_pattern   = ""
 let b:end_pattern     = ""
@@ -27,7 +28,8 @@ augroup END
 
 function! s:VimRefactLoadRuby()
    let b:outside_pattern = '^\s*\%(def\|class\|module\) ' 
-   let b:inside_pattern  = '^\s*\%(def\|class\|module\|while\|for\) ' 
+   let b:check_outside   = 1
+   let b:inside_pattern  = '^\s*\%(def\|class\|module\|while\|for\|do\) ' 
    let b:start_pattern   = ''
    let b:end_pattern     = 'end'
    let b:method_pattern  = '^\s*def '
@@ -71,9 +73,14 @@ function! s:VimRefactGetScope()
    if strlen(b:outside_pattern)<1
       return
    endif
-   let l:ppos = searchpairpos(b:outside_pattern,'',b:end_pattern,"bW")
+   let l:expr = b:check_outside ? 'getline(".") !~ b:outside_pattern' : 0
+   let l:ppos = searchpairpos(b:inside_pattern,'',b:end_pattern,"bW",l:expr)
    let l:npos = searchpairpos(b:inside_pattern ,'',b:end_pattern,"W")
-   let l:type = substitute(matchlist(getbufline("%",l:ppos[0])[0],b:outside_pattern)[0]," ","","")
+   if l:ppos[0]>0 && l:ppos[1]>0 && l:npos[0]>0 && l:npos[1]>0
+      let l:type = substitute(matchlist(getbufline("%",l:ppos[0])[0],b:outside_pattern)[0]," ","","")
+   else
+      let l:type = -1 
+   endif
    return [l:ppos,l:npos,l:type]
 endfunction
 
@@ -91,6 +98,9 @@ function! s:VimRefactExtractMethod(...) range
 
    " get some info
    let l:scope = s:VimRefactGetScope()
+   if  l:scope[2]==-1
+      return
+   end
    let l:size  = l:scope[1][0]-l:scope[0][0]
    let l:argx  = ""
    let l:imeth = getbufline("%",l:scope[0][0])[0] =~ b:method_pattern
